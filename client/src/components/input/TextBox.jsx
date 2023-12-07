@@ -4,35 +4,49 @@ import WordList from '../words/WordList';
 
 function TextBox() {
 	const [newItem, setItem] = useState('');
-	const [itemList, setList] = useState([]);
+	const [words, setWords] = useState([]);
 
-	function addItem() {
-		const item = {
-			id: Math.floor(Math.random() * 1000),
-			value: newItem,
-		};
+	const getWords = async () => {
+		try {
+			const response = await fetch('http://localhost:5001/words');
+			const parseRes = await response.json();
 
-		setList((oldItems) => [...itemList, item]);
+			setWords(() => parseRes.reverse());
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
 
-		setItem('');
-	}
+	const addItem = async (e) => {
+		try {
+			e.preventDefault();
+
+			const body = { words: newItem };
+			await fetch('http://localhost:5001/words', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(body),
+			});
+
+			setItem('');
+			getWords();
+		} catch (err) {
+			console.error(err.message);
+		}
+	};
 
 	return (
-		// <form action='/search' method='post'>
-		<>
+		<form onSubmit={newItem ? addItem : (e) => e.preventDefault()}>
 			<input
 				type='text'
 				value={newItem}
 				placeholder='Add new Item...'
 				onChange={(e) => setItem(e.target.value)}
 			/>
-			<button onClick={() => addItem()} type='submit'>
-				Submit
-			</button>
-
-			<WordList items={itemList} />
-		</>
-		// </form>
+			<button type='submit'>Submit</button>
+			<hr />
+			<WordList words={words} getWords={getWords} />
+		</form>
 	);
 }
 

@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-function WordList(props) {
-	const list = props.items.map((element) => (
-		<li key={element.id}>{element.value}</li>
+function WordList({ words, getWords }) {
+	useEffect(() => {
+		getWords();
+	}, []);
+
+	const list = words.map((word) => (
+		<div key={word.word_id}>
+			<li key={word.word_id}>
+				{word.word} - {word.part_of_speech_1} - {word.definition_1}
+			</li>
+			<hr />
+		</div>
 	));
 
-	return <ul>{list}</ul>;
+	return <div>{list.reverse()}</div>;
 }
 
 export default WordList;
