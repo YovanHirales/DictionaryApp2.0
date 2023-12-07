@@ -8,7 +8,7 @@ function TextBox() {
 
 	const getWords = async () => {
 		try {
-			const response = await fetch('http://localhost:5001/words');
+			const response = await fetch('/words');
 			const parseRes = await response.json();
 
 			setWords(() => parseRes.reverse());
@@ -22,7 +22,7 @@ function TextBox() {
 			e.preventDefault();
 
 			const body = { words: newItem };
-			await fetch('http://localhost:5001/words', {
+			await fetch('/words', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(body),
